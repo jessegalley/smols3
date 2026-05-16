@@ -13,19 +13,19 @@
 #      file-mode object written in phase 2 (plus a range read)
 #
 # Environment:
-#   SMOLS3_BIN          path to smols3 binary (default: ./smols3 in repo root)
+#   SMOLS3_BIN          path to smols3 binary (default: ./bin/smols3 in repo root)
 #   SMOLS3_PORT         listen port (default 9000)
 #
 set -u
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-BIN="${SMOLS3_BIN:-$REPO_ROOT/smols3}"
+BIN="${SMOLS3_BIN:-$REPO_ROOT/bin/smols3}"
 PORT="${SMOLS3_PORT:-9000}"
 
 if [ ! -x "$BIN" ]; then
     echo "smols3 binary not found at $BIN" >&2
-    echo "build it first: (cd $REPO_ROOT && go build -o smols3 ./cmd/smols3)" >&2
+    echo "build it first: (cd $REPO_ROOT && make)" >&2
     exit 1
 fi
 

@@ -10,9 +10,9 @@ scenario, kills the server, and reports.
   ```bash
   pip install --user boto3
   ```
-- A built `smols3` binary at the repo root:
+- A built `smols3` binary at `./bin/smols3`:
   ```bash
-  go build -o smols3 ./cmd/smols3
+  make
   ```
 
 Override the binary path with `SMOLS3_BIN=/path/to/smols3` and the listen
@@ -37,8 +37,8 @@ Boots a server in the given storage mode and runs `smoke.py` against it.
 Run both modes:
 
 ```bash
-./test/integration/run-smoke.sh file
-./test/integration/run-smoke.sh concat
+./test/smoke/run-smoke.sh file
+./test/smoke/run-smoke.sh concat
 ```
 
 ### `cross-mode.sh`
@@ -52,13 +52,13 @@ same data directory:
 3. restart in concat mode; read the file-mode object plus a pack ref, plus a range read
 
 ```bash
-./test/integration/cross-mode.sh
+./test/smoke/cross-mode.sh
 ```
 
-### `awscli.sh`
+### `../awscli.sh`
 
 Convenience env / aliases for poking at a running server interactively with
-the AWS CLI. Source it: `. ./test/integration/awscli.sh`.
+the AWS CLI. Source it: `. ./test/awscli.sh`.
 
 ## smoke.py — standalone use
 
@@ -68,7 +68,7 @@ Point it at any running endpoint via env vars:
 SMOLS3_ENDPOINT=http://127.0.0.1:9000 \
 SMOLS3_ACCESS_KEY=smols3 \
 SMOLS3_SECRET_KEY=smols3secret \
-python3 ./test/integration/smoke.py
+python3 ./test/smoke/smoke.py
 ```
 
 Useful for testing against a server you started by hand, or against a real
