@@ -84,25 +84,16 @@ func newServeCmd() *cobra.Command {
 			logger := buildLogger(cfg.Log)
 			printBanner(os.Stderr, cfg)
 
-			var st storage.Storage
-			if cfg.Storage.Mode == "concat" {
-				st = storage.NewPackStorage(storage.PackStorageDeps{
-					DataDir:               cfg.Storage.DataDir,
-					ShardDepth:            cfg.Storage.ShardDirDepth,
-					MaxObjSize:            cfg.Storage.MaxObjectSize.I(),
-					MaxConcatSize:         cfg.Storage.MaxConcatSize.I(),
-					MaxPackableObjectSize: cfg.Storage.MaxPackableObjectSize.I(),
-					Fsync:                 cfg.Storage.FsyncData,
-					DB:                    db,
-				})
-			} else {
-				st = storage.NewFileStorage(
-					cfg.Storage.DataDir,
-					cfg.Storage.ShardDirDepth,
-					cfg.Storage.MaxObjectSize.I(),
-					cfg.Storage.FsyncData,
-				)
-			}
+			st := storage.New(storage.Deps{
+				DataDir:               cfg.Storage.DataDir,
+				Mode:                  cfg.Storage.Mode,
+				ShardDepth:            cfg.Storage.ShardDirDepth,
+				MaxObjSize:            cfg.Storage.MaxObjectSize.I(),
+				MaxConcatSize:         cfg.Storage.MaxConcatSize.I(),
+				MaxPackableObjectSize: cfg.Storage.MaxPackableObjectSize.I(),
+				Fsync:                 cfg.Storage.FsyncData,
+				DB:                    db,
+			})
 
 			srv := &s3api.Server{Cfg: cfg, DB: db, Storage: st, Logger: logger}
 			httpSrv := &http.Server{
@@ -133,9 +124,7 @@ func newServeCmd() *cobra.Command {
 				if err := httpSrv.Shutdown(shutCtx); err != nil {
 					logger.Warn("shutdown", "err", err)
 				}
-				if closer, ok := st.(interface{ Close() error }); ok {
-					_ = closer.Close()
-				}
+				_ = st.Close()
 			case err := <-errCh:
 				if err != nil {
 					return err

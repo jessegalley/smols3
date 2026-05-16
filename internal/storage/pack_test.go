@@ -13,7 +13,7 @@ import (
 	"github.com/jessegalley/smols3/internal/index"
 )
 
-func newPackStorage(t *testing.T) (Storage, *index.DB, string) {
+func newPackStorage(t *testing.T) (*Storage, *index.DB, string) {
 	t.Helper()
 	dir := t.TempDir()
 	db, err := index.Open(filepath.Join(dir, "index.db"))
@@ -24,8 +24,9 @@ func newPackStorage(t *testing.T) (Storage, *index.DB, string) {
 	if err := db.CreateBucket("b"); err != nil {
 		t.Fatal(err)
 	}
-	st := NewPackStorage(PackStorageDeps{
+	st := New(Deps{
 		DataDir:               dir,
+		Mode:                  "concat",
 		ShardDepth:            2,
 		MaxObjSize:            10 * 1024 * 1024,
 		MaxConcatSize:         1 * 1024 * 1024, // 1 MiB pack

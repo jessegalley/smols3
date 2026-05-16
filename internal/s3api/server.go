@@ -22,7 +22,7 @@ import (
 type Server struct {
 	Cfg     config.Config
 	DB      *index.DB
-	Storage storage.Storage
+	Storage *storage.Storage
 	Logger  *slog.Logger
 }
 
